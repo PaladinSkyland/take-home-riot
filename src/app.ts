@@ -5,12 +5,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerSpecs from './swagger.js';
 
 import encryptionRouter from './routes/encryption.routes.js';
 import signRouter from './routes/sign.routes.js';
 
-// configures dotenv to work in your application
+// Dotenv configuration
 dotenv.config();
 const app = express();
 
@@ -42,10 +43,6 @@ app.use(
     response: Response,
     next: any,
   ) => {
-    // if (error instanceof SyntaxError && 'body' in error) {
-    //   console.error('Invalid JSON:', error.message);
-    // response.status(400).json({ error: 'invalid JSON' });
-    // } else
     if (error instanceof Error) {
       console.error('Unknown error:', error.message);
       const message =

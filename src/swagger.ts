@@ -1,21 +1,35 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     adminToken:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *       description: Use this token to access admin routes.
+ *     teacherToken:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *       description: Use this token to access teacher routes.
+ *     studentToken:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *       description: Use this token to access student routes.
+ */
 
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Express API with Swagger',
+      title: 'Riot Take Home Test',
       version: '1.0.0',
-      description: 'A simple Express API application',
+      description: 'A simple Express API application for riot take home test',
     },
-    servers: [
-      {
-        url: 'http://localhost:3000',
-        description: 'Development server',
-      },
-    ],
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./src/swagger.ts', './src/routes/*.ts'],
 };
 
 const specs = swaggerJsdoc(options);

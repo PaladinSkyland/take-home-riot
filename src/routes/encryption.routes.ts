@@ -8,14 +8,41 @@ const encryptionService = new Base64Encryption();
 const controller = new EncryptController(encryptionService);
 
 /**
- * @swager
- *
+ * @swagger
+ * /encrypt:
+ *   post:
+ *     summary: Encrypt a object
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Encrypted object
  */
 router.post('/encrypt', (req: Request, res: Response) => {
   const result = controller.encrypt(req.body);
   res.json(result);
 });
 
+
+/**
+ * @swagger
+ * /decrypt:
+ *   post:
+ *     summary: Decrypt a object
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Decrypted object
+ */
 router.post('/decrypt', (req: Request, res: Response) => {
   const result = controller.decrypt(req.body);
   res.json(result);
