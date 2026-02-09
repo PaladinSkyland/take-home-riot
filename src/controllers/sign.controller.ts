@@ -9,14 +9,14 @@ export class SignController {
   }
 
   sign(req: Request, res: Response) {
-    const payload = req.body;
-    const signature = this.signer.sign(payload);
+    const data = req.body;
+    const signature = this.signer.sign(data);
     res.json({ signature });
   }
 
   verify(req: Request, res: Response) {
-    const { payload, signature } = req.body;
-    const isValid = this.signer.verify(payload, signature);
+    const { data, signature } = req.body;
+    const isValid = this.signer.verify(data, signature);
     res.json({ valid: isValid });
   }
 }
