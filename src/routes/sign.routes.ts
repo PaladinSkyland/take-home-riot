@@ -12,7 +12,7 @@ const signController = new SignController(
 
 /**
  * @swager
-*
+ *
  */
 router.post('/sign', signController.sign.bind(signController));
 

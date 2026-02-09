@@ -1,5 +1,5 @@
 import express from 'express';
-import type { Request, Response } from 'express';
+import type { Request, Response, ErrorRequestHandler } from 'express';
 import { json } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -27,18 +27,6 @@ app.use(
 app.use(json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use((error, request, response, next) => {
-//     if (error instanceof SyntaxError && error.status === 400 && "body" in error) {
-//         console.error("Invalid JSON:", error.message);
-//         response.status(400).json({ error: "invalid JSON" });
-//     } else if (error instanceof Error) {
-//         console.error("Unknown error:", error.message);
-//         response.status(500).json({ error: "unknown error" });
-//     } else {
-//         next();
-//     }
-// });
-
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 app.get('/', (request: Request, response: Response) => {
@@ -46,4 +34,32 @@ app.get('/', (request: Request, response: Response) => {
 });
 
 app.use('/', encryptionRouter, signRouter);
+
+app.use(
+  (
+    error: ErrorRequestHandler,
+    request: Request,
+    response: Response,
+    next: any,
+  ) => {
+    // if (error instanceof SyntaxError && 'body' in error) {
+    //   console.error('Invalid JSON:', error.message);
+    // response.status(400).json({ error: 'invalid JSON' });
+    // } else
+    if (error instanceof Error) {
+      console.error('Unknown error:', error.message);
+      const message =
+        error instanceof Error ? error.message : 'Internal server error';
+      const statusCode =
+        typeof message === 'string' && message.toLowerCase().includes('invalid')
+          ? 400
+          : 500;
+
+      response.status(statusCode).json({ error: message });
+    } else {
+      next();
+    }
+  },
+);
+
 export default app;
