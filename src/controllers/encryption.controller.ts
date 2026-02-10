@@ -21,7 +21,12 @@ export class EncryptController {
     const result: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(payload)) {
-      result[key] = this.encryption.decrypt(value);
+      if (this.encryption.isEncrypted(value)) {
+        result[key] = this.encryption.decrypt(value);
+        continue;
+      } else {
+        result[key] = value;
+      }
     }
 
     return result;
