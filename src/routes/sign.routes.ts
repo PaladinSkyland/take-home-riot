@@ -45,12 +45,18 @@ router.post('/sign', (req: Request, res: Response) => {
  *               signature:
  *                 type: string
  *     responses:
- *       200:
+ *       204:
  *         description: Verification result
+ *       400:
+ *         description: Invalid data
  */
 router.post('/verify', (req: Request, res: Response) => {
   const result = signController.verify(req.body.data, req.body.signature);
-  res.json({ valid: result });
+  if (result) {
+    res.status(204).send();
+  } else {
+    res.status(400).send();
+  }
 });
 
 export default router;
