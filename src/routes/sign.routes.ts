@@ -1,6 +1,7 @@
 import express from 'express';
 import SignController from '../controllers/sign.controller.js';
 import { HmacSignatureService } from '../helper/sign.js';
+import type { Request, Response } from 'express';
 const router = express.Router();
 
 const signController = new SignController(
@@ -22,7 +23,10 @@ const signController = new SignController(
  *       200:
  *         description: Signed object
  */
-router.post('/sign', signController.sign.bind(signController));
+router.post('/sign', (req: Request, res: Response) => {
+  const result = signController.sign(req.body);
+  res.json({ signature: result });
+});
 
 /**
  * @swagger
@@ -44,6 +48,9 @@ router.post('/sign', signController.sign.bind(signController));
  *       200:
  *         description: Verification result
  */
-router.post('/verify', signController.verify.bind(signController));
+router.post('/verify', (req: Request, res: Response) => {
+  const result = signController.verify(req.body.data, req.body.signature);
+  res.json({ valid: result });
+});
 
 export default router;

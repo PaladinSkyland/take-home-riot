@@ -8,16 +8,14 @@ export class SignController {
     this.signer = signer;
   }
 
-  sign(req: Request, res: Response) {
-    const data = req.body;
+  sign(data: Record<string, unknown>) {
     const signature = this.signer.sign(data);
-    res.json({ signature });
+    return signature
   }
 
-  verify(req: Request, res: Response) {
-    const { data, signature } = req.body;
+  verify(data: Record<string, unknown>, signature: string) {
     const isValid = this.signer.verify(data, signature);
-    res.json({ valid: isValid });
+    return isValid
   }
 }
 
