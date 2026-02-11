@@ -4,8 +4,12 @@ import { HmacSignatureService } from '../helper/sign.js';
 import type { Request, Response } from 'express';
 const router = express.Router();
 
+if (!process.env.SECRET) {
+  throw new Error('SECRET must be set');
+}
+
 const signController = new SignController(
-  new HmacSignatureService(process.env.SECRET || ''),
+  new HmacSignatureService(process.env.SECRET),
 );
 
 /**
