@@ -1,21 +1,19 @@
 import express from 'express';
-import type { Request, Response, ErrorRequestHandler } from 'express';
+import type { Request, Response } from 'express';
 import { json } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
 import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerSpecs from './swagger.js';
 
 import encryptionRouter from './routes/encryption.routes.js';
 import signRouter from './routes/sign.routes.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 // Dotenv configuration
 dotenv.config();
 const app = express();
-
-const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
@@ -36,27 +34,6 @@ app.get('/', (request: Request, response: Response) => {
 
 app.use('/', encryptionRouter, signRouter);
 
-app.use(
-  (
-    error: ErrorRequestHandler,
-    request: Request,
-    response: Response,
-    next: any,
-  ) => {
-    if (error instanceof Error) {
-      console.error('Unknown error:', error.message);
-      const message =
-        error instanceof Error ? error.message : 'Internal server error';
-      const statusCode =
-        typeof message === 'string' && message.toLowerCase().includes('invalid')
-          ? 400
-          : 500;
-
-      response.status(statusCode).json({ error: message });
-    } else {
-      next();
-    }
-  },
-);
+app.use(errorHandler);
 
 export default app;

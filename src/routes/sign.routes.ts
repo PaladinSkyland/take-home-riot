@@ -2,6 +2,7 @@ import express from 'express';
 import SignController from '../controllers/sign.controller.js';
 import { HmacSignatureService } from '../helper/sign.js';
 import type { Request, Response } from 'express';
+import { ApiError } from '../errors/apiError.js';
 const router = express.Router();
 
 if (!process.env.SECRET) {
@@ -55,11 +56,28 @@ router.post('/sign', (req: Request, res: Response) => {
  *         description: Invalid data
  */
 router.post('/verify', (req: Request, res: Response) => {
-  const result = signController.verify(req.body.data, req.body.signature);
+  if (!req.body || typeof req.body !== 'object') {
+    throw ApiError.badRequest('Body must be an object');
+  }
+
+  const { data, signature } = req.body as Record<string, unknown>;
+  if (typeof signature !== 'string') {
+    throw ApiError.badRequest(
+      'The field: signature is required (string)',
+    );
+  }
+
+  if (data === null || data === undefined || typeof data !== 'object') {
+    throw ApiError.badRequest(
+      'The field: data is required (object)',
+    );
+  }
+
+  const result = signController.verify(data as Record<string, unknown>, signature);
   if (result) {
-    res.status(204).send();
+    res.status(204).send(); //No body on 204
   } else {
-    res.status(400).send();
+    throw ApiError.custom(400, 'Invalid signature');
   }
 });
 

@@ -1,4 +1,5 @@
-// helpers/encryption/EncryptionService.ts
+import { ApiError } from '../errors/apiError.js';
+
 export interface EncryptionService {
   encrypt(value: unknown): string;
   decrypt(value: string): unknown;
@@ -10,7 +11,7 @@ export class Base64Encryption implements EncryptionService {
     try {
       return Buffer.from(JSON.stringify(value)).toString('base64');
     } catch (error) {
-      throw new Error('Invalid value to encrypt');
+      throw ApiError.badRequest('Invalid value to encrypt');
     }
   }
 
@@ -18,7 +19,7 @@ export class Base64Encryption implements EncryptionService {
     try {
       return JSON.parse(Buffer.from(value, 'base64').toString('utf-8'));
     } catch (error) {
-      throw new Error('Invalid base64 string');
+      throw ApiError.badRequest('Invalid base64 string');
     }
   }
 

@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { ApiError } from '../errors/apiError.js';
 
 export interface SignatureService {
   sign(data: unknown): string;
@@ -39,16 +40,20 @@ export class HmacSignatureService implements SignatureService {
         .update(payload)
         .digest('hex');
     } catch (error) {
-      throw new Error('Invalid data to sign');
+      throw ApiError.badRequest('Invalid data to sign');
     }
   }
 
   verify(data: unknown, signature: string): boolean {
     if (!signature) {
-      throw new Error('The field: signature is required (string)');
+      throw ApiError.badRequest(
+        'The field: signature is required (string)',
+      );
     }
     if (!data) {
-      throw new Error('The field: data is required (object)');
+      throw ApiError.badRequest(
+        'The field: data is required (object)',
+      );
     }
     try {
       const expected = this.sign(data);
@@ -57,7 +62,7 @@ export class HmacSignatureService implements SignatureService {
         Buffer.from(signature),
       );
     } catch (error) {
-      throw new Error('Invalid data to verify');
+      throw ApiError.badRequest('Invalid data to verify');
     }
   }
 }
